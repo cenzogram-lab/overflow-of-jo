@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { createActorWithConfig } from "../config";
+import { SiteContentContext } from "../contexts/SiteContentContext";
 
 // ─── Content Key Constants ────────────────────────────────────────────────────
 
@@ -98,15 +99,22 @@ export function getText(
 
 // ─── Hook ─────────────────────────────────────────────────────────────────────
 
-export function useContentOverrides(): {
+/**
+ * Standalone fetch, used only when the hook is called outside
+ * `SiteContentProvider` (the admin surface). Inside the provider the shared,
+ * already-resolved copy is returned instead so the page makes one request and
+ * never re-renders text underneath the visitor.
+ */
+function useStandaloneOverrides(enabled: boolean): {
   overrides: Record<string, string>;
   loading: boolean;
   refetch: () => void;
 } {
   const [overrides, setOverrides] = useState<Record<string, string>>({});
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(enabled);
 
   const fetchOverrides = useCallback(() => {
+    if (!enabled) return;
     setLoading(true);
     createActorWithConfig()
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -133,11 +141,29 @@ export function useContentOverrides(): {
       .finally(() => {
         setLoading(false);
       });
-  }, []);
+  }, [enabled]);
 
   useEffect(() => {
     fetchOverrides();
   }, [fetchOverrides]);
 
   return { overrides, loading, refetch: fetchOverrides };
+}
+
+export function useContentOverrides(): {
+  overrides: Record<string, string>;
+  loading: boolean;
+  refetch: () => void;
+} {
+  const site = useContext(SiteContentContext);
+  const standalone = useStandaloneOverrides(site === null);
+
+  if (site) {
+    return {
+      overrides: site.overrides,
+      loading: !site.isReady,
+      refetch: site.refetch,
+    };
+  }
+  return standalone;
 }

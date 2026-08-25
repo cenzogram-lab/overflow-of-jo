@@ -1,22 +1,16 @@
 import { Coffee } from "lucide-react";
 import { useEffect, useState } from "react";
-import { STORAGE_KEYS, getSiteImageFromBackend } from "../utils/adminStorage";
+import { useSiteContent } from "../contexts/SiteContentContext";
 
 export default function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [logoImage, setLogoImage] = useState<string | null>(null);
+  const { logoImage } = useSiteContent();
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  useEffect(() => {
-    getSiteImageFromBackend(STORAGE_KEYS.LOGO_IMAGE).then((val) => {
-      setLogoImage(val);
-    });
   }, []);
 
   const smoothScrollTo = (id: string) => {
@@ -39,7 +33,7 @@ export default function Navigation() {
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
           ? "bg-cream-light/95 backdrop-blur-sm shadow-warm border-b border-[var(--accent-yellow-border)]"
-          : "bg-brown-dark/80 backdrop-blur-sm border-b border-[var(--accent-yellow-border)]/30"
+          : "nav-over-hero border-b border-transparent"
       }`}
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -62,14 +56,14 @@ export default function Navigation() {
               )}
             </div>
             <span
-              className={`font-display text-lg font-semibold transition-colors ${isScrolled ? "text-brown-dark" : "text-cream-light"}`}
+              className={`font-display text-lg font-semibold transition-colors ${isScrolled ? "text-brown-dark" : "text-cream-light drop-shadow-[0_1px_6px_rgba(0,0,0,0.55)]"}`}
             >
               Overflow of Jo
             </span>
           </button>
 
           {/* Desktop Nav */}
-          <div className="hidden md:flex items-center gap-6">
+          <div className="hidden lg:flex items-center gap-6">
             {navLinks.map((link) => (
               <button
                 key={link.label}
@@ -78,7 +72,7 @@ export default function Navigation() {
                 className={`text-sm font-body transition-colors relative group bg-transparent border-0 p-0 cursor-pointer ${
                   isScrolled
                     ? "text-brown-mid hover:text-brown-dark"
-                    : "text-cream-light hover:text-[var(--accent-yellow)] font-medium"
+                    : "text-cream-light hover:text-[var(--accent-yellow)] font-medium drop-shadow-[0_1px_5px_rgba(0,0,0,0.5)]"
                 }`}
               >
                 {link.label}
@@ -97,7 +91,7 @@ export default function Navigation() {
           {/* Mobile Menu Button */}
           <button
             type="button"
-            className={`md:hidden p-2 rounded-md transition-colors ${isScrolled ? "text-brown-mid hover:text-brown-dark hover:bg-[var(--accent-yellow)]/30" : "text-cream-light hover:text-[var(--accent-yellow)] hover:bg-white/10"}`}
+            className={`lg:hidden p-2 rounded-md transition-colors ${isScrolled ? "text-brown-mid hover:text-brown-dark hover:bg-[var(--accent-yellow)]/30" : "text-cream-light hover:text-[var(--accent-yellow)] hover:bg-white/10"}`}
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-label="Toggle menu"
           >
@@ -107,9 +101,11 @@ export default function Navigation() {
           </button>
         </div>
 
-        {/* Mobile Menu */}
+        {/* Mobile Menu. The panel opacity is an arbitrary value because /98 is
+            outside Tailwind's scale — as a plain modifier the utility is never
+            generated and the panel renders transparent. */}
         {isMobileMenuOpen && (
-          <div className="md:hidden bg-cream-light/98 border-t border-[var(--accent-yellow-border)] py-4 px-2 shadow-warm">
+          <div className="lg:hidden bg-cream-light/[0.98] border-t border-[var(--accent-yellow-border)] py-4 px-2 shadow-warm">
             {navLinks.map((link) => (
               <button
                 key={link.label}

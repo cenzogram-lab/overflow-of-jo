@@ -23,3 +23,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     </InternetIdentityProvider>
   </QueryClientProvider>,
 );
+
+// Last-resort net: App clears the boot splash from an effect on every route.
+// This only fires if React never mounts at all, so it must not preempt that.
+setTimeout(() => {
+  document.getElementById("boot-splash")?.remove();
+}, 6000);
