@@ -134,7 +134,7 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
         prev >= progressCap.current
           ? prev
           : Math.min(
-              prev + (progressCap.current - prev) * 0.14 + 0.4,
+              prev + (progressCap.current - prev) * 0.2 + 0.6,
               progressCap.current,
             ),
       );
@@ -151,6 +151,10 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
     if (!isMounted.current) return;
     const elapsed = Date.now() - mountedAt.current;
     const wait = Math.max(0, MIN_DISPLAY_MS - elapsed);
+    // Everything has resolved; only the display floor is left to run out. Open
+    // the cap so the creep walks the indicator most of the way home during it,
+    // instead of sitting still and then teleporting to 100.
+    progressCap.current = Math.max(progressCap.current, 92);
     window.setTimeout(() => {
       if (!isMounted.current) return;
       progressCap.current = 100;
@@ -211,6 +215,16 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     void load();
   }, [load]);
+
+  // A request that hangs long enough to hit the failsafe should still show
+  // movement rather than a stalled indicator, so open the cap as the window
+  // closes and let the creep run.
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      progressCap.current = Math.max(progressCap.current, 90);
+    }, FAILSAFE_MS * 0.55);
+    return () => window.clearTimeout(timer);
+  }, []);
 
   // Failsafe — never trap the visitor behind a hung request.
   useEffect(() => {
