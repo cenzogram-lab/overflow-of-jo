@@ -1,0 +1,116 @@
+type _ImmutableObjectStorageRefillResult = 
+ record {
+   success: opt bool;
+   topped_up_amount: opt nat;
+ };
+type _ImmutableObjectStorageRefillInformation = record {
+                                                  proposed_top_up_amount:
+                                                   opt nat;};
+type _ImmutableObjectStorageCreateCertificateResult = 
+ record {
+   blob_hash: text;
+   method: text;
+ };
+type Value = 
+ variant {
+   "bool": bool;
+   float: float64;
+   "int": int;
+   "nat": nat;
+   "null";
+   "text": text;
+ };
+type UserRole = 
+ variant {
+   admin;
+   guest;
+   user;
+ };
+type UserProfile = record {name: text;};
+type Result = 
+ record {
+   hasMore: bool;
+   rows: vec vec Cell;
+ };
+type PrayerRequest = 
+ record {
+   allowOnSleeve: bool;
+   firstName: text;
+   id: nat;
+   request: text;
+   starred: bool;
+   submittedAt: int;
+ };
+type Inquiry = 
+ record {
+   email: text;
+   eventDate: text;
+   eventType: EventType;
+   id: nat;
+   message: text;
+   name: text;
+   phone: text;
+   starred: bool;
+ };
+type EventType = 
+ variant {
+   ChurchEvent;
+   CommunityGathering;
+   Wedding;
+ };
+type Cell = 
+ record {
+   name: text;
+   value: Value;
+ };
+service : {
+  _immutableObjectStorageBlobsAreLive: (hashes: vec blob) -> (vec bool) query;
+  _immutableObjectStorageBlobsToDelete: () -> (vec blob) query;
+  _immutableObjectStorageConfirmBlobDeletion: (blobs: vec blob) -> ();
+  _immutableObjectStorageCreateCertificate: (blobHash: text) ->
+   (_ImmutableObjectStorageCreateCertificateResult);
+  _immutableObjectStorageRefillCashier: (refillInformation:
+   opt _ImmutableObjectStorageRefillInformation) ->
+   (_ImmutableObjectStorageRefillResult);
+  _immutableObjectStorageUpdateGatewayPrincipals: () -> ();
+  _initializeAccessControl: () -> ();
+  assignCallerUserRole: (user: principal, role: UserRole) -> ();
+  deleteDrinkImage: (key: text) -> (bool);
+  deleteInquiry: (id: nat) -> (bool);
+  deletePrayerRequest: (id: nat) -> (bool);
+  execute: (qJson: text) -> (Result) query;
+  getAboutImageBase64: () -> (text) query;
+  getAllInquiries: () -> (vec Inquiry) query;
+  getAllPrayerRequests: () -> (vec PrayerRequest) query;
+  getCallerUserProfile: () -> (opt UserProfile) query;
+  getCallerUserRole: () -> (UserRole) query;
+  getContentOverrides: () -> (text) query;
+  getCycles: () -> (nat) query;
+  getDrinkImage: (key: text) -> (opt text) query;
+  getHeroImageBase64: () -> (text) query;
+  getInquiryById: (id: nat) -> (opt Inquiry) query;
+  getLogoImageBase64: () -> (text) query;
+  getMapAddress: () -> (text) query;
+  getMenuCategoriesJson: () -> (text) query;
+  getPrayerRequestsWithSleeveConsent: () -> (vec PrayerRequest) query;
+  getSocialGridJson: () -> (text) query;
+  getTotalPrayerRequestsCount: () -> (nat) query;
+  getUserProfile: (user: principal) -> (opt UserProfile) query;
+  isCallerAdmin: () -> (bool) query;
+  saveAboutImageBase64: (base64Data: text) -> ();
+  saveCallerUserProfile: (profile: UserProfile) -> ();
+  saveContentOverrides: (json: text) -> ();
+  saveDrinkImage: (key: text, base64: text) -> ();
+  saveHeroImageBase64: (base64Data: text) -> ();
+  saveLogoImageBase64: (base64Data: text) -> ();
+  saveMapAddress: (address: text) -> ();
+  saveMenuCategoriesJson: (json: text) -> ();
+  saveSocialGridJson: (json: text) -> ();
+  schema: () -> (text) query;
+  starInquiry: (id: nat) -> (bool);
+  starPrayerRequest: (id: nat) -> (bool);
+  submitInquiry: (name: text, email: text, phone: text, eventType: EventType,
+   eventDate: text, message: text) -> (nat);
+  submitPrayerRequest: (firstName: text, request: text, allowOnSleeve:
+   bool) -> (nat);
+}

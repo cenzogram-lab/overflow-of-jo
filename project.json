@@ -1,0 +1,19 @@
+{
+  "overview": "Faith-based coffee shop website for Overflow of Jo inside Wave Wilson Church, with an admin panel for managing menu, images, Instagram embeds, form submissions, and inline text editing.",
+  "features": [
+    "Public site with hero, about, menu, events, prayer requests, scripture, and Instagram embeds",
+    "Admin panel with menu management, site images, find us online, form submissions, and inline editor tabs",
+    "Toggle-based inline text editing inside an embedded site view within the admin panel",
+    "Content overrides persisted to the backend as a semantic key-to-text map",
+    "Interactive OpenStreetMap with Nominatim geocoding for the events location"
+  ],
+  "category": "landing-page",
+  "tags": [
+    "coffee-shop",
+    "faith-based",
+    "admin-panel",
+    "inline-editor",
+    "internet-computer"
+  ],
+  "last_updated": "2026-07-08T00:05:38.418Z"
+}

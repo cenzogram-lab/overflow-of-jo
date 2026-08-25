@@ -1,0 +1,131 @@
+// Version: 4.0.0
+type AccessControlState__993386030 =
+  {
+    var adminAssigned : Bool;
+    userRoles : Map__386906547<Principal, UserRole__270437342>
+  };
+type Data__265875254<K, V> = {var count : Nat__58649523; kvs : [var ?(K, V)]};
+type EventType__585999495 = {#ChurchEvent; #CommunityGathering; #Wedding};
+type EventType__824142564 = {#ChurchEvent; #CommunityGathering; #Wedding};
+type Inquiry__102244153 =
+  {
+    email : Text;
+    eventDate : Text;
+    eventType : EventType__585999495;
+    id : Nat;
+    message : Text;
+    name : Text;
+    phone : Text;
+    starred : Bool
+  };
+type Inquiry__931573009 =
+  {
+    email : Text;
+    eventDate : Text;
+    eventType : EventType__824142564;
+    id : Nat;
+    message : Text;
+    name : Text;
+    phone : Text;
+    starred : Bool
+  };
+type Internal__161573640<K, V> =
+  {children : [var ?Node__430031793<K, V>]; data : Data__265875254<K, V>};
+type Leaf__1045638083<K, V> = {data : Data__265875254<K, V>};
+type MapAddressState__647796843 = {var address : Text};
+type Map__13625999<K, V> =
+  {var root : Node__430031793<K, V>; var size : Nat__58649523};
+type Map__386906547<K, V> = Map__670138087<K, V>;
+type Map__670138087<K, V> = Map__13625999<K, V>;
+type Nat__58649523 = Nat__920180692;
+type Nat__920180692 = Nat;
+type NewActor__21537712 =
+  {
+    var aboutImageBase64 : Text;
+    accessControlState : AccessControlState__993386030;
+    var contentOverridesJson : Text;
+    drinkImages : Map__386906547<Text, Text>;
+    var heroImageBase64 : Text;
+    inquiriesMap : Map__386906547<Nat, Inquiry__102244153>;
+    var logoImageBase64 : Text;
+    mapAddressState : MapAddressState__647796843;
+    var menuCategoriesJson : Text;
+    var nextId : Nat;
+    prayerRequestsMap : Map__386906547<Nat, PrayerRequest__408705203>;
+    var socialGridJson : Text;
+    userProfiles : Map__386906547<Principal, UserProfile__593847555>
+  };
+type Node__430031793<K, V> =
+  {#internal : Internal__161573640<K, V>; #leaf : Leaf__1045638083<K, V>};
+type OldActor__31835600 =
+  {
+    var aboutImageBase64 : Text;
+    accessControlState : AccessControlState__993386030;
+    var contentOverridesJson : Text;
+    var heroImageBase64 : Text;
+    inquiriesMap : Map__386906547<Nat, Inquiry__102244153>;
+    var logoImageBase64 : Text;
+    mapAddressState : MapAddressState__647796843;
+    var menuCategoriesJson : Text;
+    var nextId : Nat;
+    prayerRequestsMap : Map__386906547<Nat, PrayerRequest__408705203>;
+    var socialGridJson : Text;
+    userProfiles : Map__386906547<Principal, UserProfile__593847555>
+  };
+type PrayerRequest__408705203 =
+  {
+    allowOnSleeve : Bool;
+    firstName : Text;
+    id : Nat;
+    request : Text;
+    starred : Bool;
+    submittedAt : Int
+  };
+type PrayerRequest__844815975 =
+  {
+    allowOnSleeve : Bool;
+    firstName : Text;
+    id : Nat;
+    request : Text;
+    starred : Bool;
+    submittedAt : Int
+  };
+type UserProfile__491224006 = {name : Text};
+type UserProfile__593847555 = {name : Text};
+type UserRole__1073662873 = {#admin; #guest; #user};
+type UserRole__270437342 = {#admin; #guest; #user};
+{
+  "20260824_000000" : (old : OldActor__31835600) -> NewActor__21537712
+}
+actor  {
+  stable var aboutImageBase64 : Text;
+  stable accessControlState :
+    {
+      var adminAssigned : Bool;
+      userRoles : Map__386906547<Principal, UserRole__1073662873>
+    };
+  stable var contentOverridesJson : Text;
+  stable drinkImages :
+    {var root : Node__430031793<Text, Text>; var size : Nat__58649523};
+  stable var heroImageBase64 : Text;
+  stable inquiriesMap :
+    {
+      var root : Node__430031793<Nat, Inquiry__931573009>;
+      var size : Nat__58649523
+    };
+  stable var logoImageBase64 : Text;
+  stable mapAddressState : {var address : Text};
+  stable var menuCategoriesJson : Text;
+  stable var nextId : Nat;
+  stable prayerRequestsMap :
+    {
+      var root : Node__430031793<Nat, PrayerRequest__844815975>;
+      var size : Nat__58649523
+    };
+  stable var socialGridJson : Text;
+  stable userProfiles :
+    {
+      var root : Node__430031793<Principal, UserProfile__491224006>;
+      var size : Nat__58649523
+    }
+};
