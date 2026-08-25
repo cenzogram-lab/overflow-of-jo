@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { createActorWithConfig } from "../config";
+import React, { useEffect, useMemo, useState } from "react";
+import { useSiteContent } from "../contexts/SiteContentContext";
 import { getDrinkImageFromBackend } from "../utils/adminStorage";
 
 type DrinkItem = {
@@ -172,36 +172,27 @@ const DEFAULT_MENU_CATEGORIES: MenuCategory[] = [
 ];
 
 export default function Menu() {
-  const [menuCategories, setMenuCategories] = useState<MenuCategory[]>(
-    DEFAULT_MENU_CATEGORIES,
-  );
+  const { menuJson } = useSiteContent();
   const [activeCategory, setActiveCategory] = useState<string>("coffee");
 
-  useEffect(() => {
-    createActorWithConfig()
-      .then((actor) => (actor as any).getMenuCategoriesJson())
-      .then((raw) => {
-        if (raw) {
-          try {
-            const parsed = JSON.parse(raw) as MenuCategory[];
-            if (parsed && parsed.length > 0) {
-              // Always keep hardcoded category names/IDs.
-              // Only pull items from backend for matching category IDs.
-              const merged = DEFAULT_MENU_CATEGORIES.map((defaultCat) => {
-                const backendCat = parsed.find((c) => c.id === defaultCat.id);
-                return backendCat
-                  ? { ...defaultCat, items: backendCat.items }
-                  : defaultCat;
-              });
-              setMenuCategories(merged);
-            }
-          } catch {
-            // fall back to defaults
-          }
-        }
-      })
-      .catch(() => {});
-  }, []);
+  const menuCategories = useMemo<MenuCategory[]>(() => {
+    if (!menuJson) return DEFAULT_MENU_CATEGORIES;
+    try {
+      const parsed = JSON.parse(menuJson) as MenuCategory[];
+      if (!parsed || parsed.length === 0) return DEFAULT_MENU_CATEGORIES;
+      // Always keep hardcoded category names/IDs.
+      // Only pull items from backend for matching category IDs.
+      return DEFAULT_MENU_CATEGORIES.map((defaultCat) => {
+        const backendCat = parsed.find((c) => c.id === defaultCat.id);
+        return backendCat
+          ? { ...defaultCat, items: backendCat.items }
+          : defaultCat;
+      });
+    } catch {
+      // fall back to defaults
+      return DEFAULT_MENU_CATEGORIES;
+    }
+  }, [menuJson]);
 
   const currentCategory =
     menuCategories.find((c) => c.id === activeCategory) ?? menuCategories[0];

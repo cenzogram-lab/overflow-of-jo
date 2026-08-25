@@ -10,8 +10,67 @@
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <style>
+      /* Boot splash — paints the brand ground before the bundle evaluates, so
+         the animated preloader takes over without a white flash. Removed by
+         LoadingScreen on mount. */
+      html,
+      body {
+        margin: 0;
+        background-color: #faf5ee;
+      }
+      #boot-splash {
+        position: fixed;
+        inset: 0;
+        z-index: 2147483001;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(180deg, #fcf8f2 0%, #fcf8f2 45%, #f2e9dc 100%);
+      }
+      #boot-splash svg {
+        width: clamp(168px, 46vw, 252px);
+        height: auto;
+      }
+      #boot-splash .boot-splash__pulse {
+        animation: boot-splash-pulse 1.5s ease-in-out infinite;
+      }
+      @keyframes boot-splash-pulse {
+        0%,
+        100% {
+          opacity: 0.35;
+        }
+        50% {
+          opacity: 1;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #boot-splash .boot-splash__pulse {
+          animation: none;
+          opacity: 0.7;
+        }
+      }
+    </style>
   </head>
   <body>
+    <div id="boot-splash" aria-hidden="true">
+      <svg viewBox="10 -6 248 224" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false">
+        <g
+          class="boot-splash__pulse"
+          fill="none"
+          stroke="#3f2718"
+          stroke-width="7"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M62 96 C 64 148, 90 178, 124 178 C 158 178, 184 148, 186 96" />
+          <ellipse cx="124" cy="96" rx="62" ry="14" />
+          <path d="M186 106 C 219 108, 221 150, 183 154" />
+          <path d="M66 184 C 92 212, 156 212, 182 184" />
+          <path d="M203 20 L203 78 M181 41 L225 41" stroke-width="13" stroke-linecap="butt" />
+        </g>
+      </svg>
+    </div>
     <div id="root"></div>
     <script type="module" src="./src/main.tsx"></script>
   </body>

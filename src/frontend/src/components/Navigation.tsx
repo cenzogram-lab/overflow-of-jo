@@ -1,22 +1,16 @@
 import { Coffee } from "lucide-react";
 import { useEffect, useState } from "react";
-import { STORAGE_KEYS, getSiteImageFromBackend } from "../utils/adminStorage";
+import { useSiteContent } from "../contexts/SiteContentContext";
 
 export default function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [logoImage, setLogoImage] = useState<string | null>(null);
+  const { logoImage } = useSiteContent();
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  useEffect(() => {
-    getSiteImageFromBackend(STORAGE_KEYS.LOGO_IMAGE).then((val) => {
-      setLogoImage(val);
-    });
   }, []);
 
   const smoothScrollTo = (id: string) => {

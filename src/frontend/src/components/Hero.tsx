@@ -1,11 +1,6 @@
 import { ChevronDown } from "lucide-react";
-import { useEffect, useState } from "react";
-import { createActorWithConfig } from "../config";
-import {
-  CONTENT_KEYS,
-  getText,
-  useContentOverrides,
-} from "../hooks/useContentOverrides";
+import { useSiteContent } from "../contexts/SiteContentContext";
+import { CONTENT_KEYS, getText } from "../hooks/useContentOverrides";
 
 const smoothScrollTo = (id: string) => {
   const target = document.getElementById(id);
@@ -24,17 +19,8 @@ const textBg: React.CSSProperties = {
 };
 
 export default function Hero() {
-  const [heroBg, setHeroBg] = useState<string>(DEFAULT_HERO_BG);
-  const { overrides } = useContentOverrides();
-
-  useEffect(() => {
-    createActorWithConfig()
-      .then((actor) => (actor as any).getHeroImageBase64())
-      .then((result) => {
-        if (result) setHeroBg(result);
-      })
-      .catch(() => {});
-  }, []);
+  const { overrides, heroImage } = useSiteContent();
+  const heroBg = heroImage ?? DEFAULT_HERO_BG;
 
   return (
     <section

@@ -1,11 +1,7 @@
 import { Coffee, Heart, Users } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { createActorWithConfig } from "../config";
-import {
-  CONTENT_KEYS,
-  getText,
-  useContentOverrides,
-} from "../hooks/useContentOverrides";
+import { useSiteContent } from "../contexts/SiteContentContext";
+import { CONTENT_KEYS, getText } from "../hooks/useContentOverrides";
 
 const smoothScrollTo = (id: string) => {
   const target = document.getElementById(id);
@@ -20,8 +16,8 @@ const DEFAULT_ABOUT_IMG =
 export default function About() {
   const sectionRef = useRef<HTMLElement>(null);
   const [isVisible, setIsVisible] = useState(false);
-  const [aboutImg, setAboutImg] = useState<string>(DEFAULT_ABOUT_IMG);
-  const { overrides } = useContentOverrides();
+  const { overrides, aboutImage } = useSiteContent();
+  const aboutImg = aboutImage ?? DEFAULT_ABOUT_IMG;
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -32,15 +28,6 @@ export default function About() {
     );
     if (sectionRef.current) observer.observe(sectionRef.current);
     return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    createActorWithConfig()
-      .then((actor) => (actor as any).getAboutImageBase64())
-      .then((result) => {
-        if (result) setAboutImg(result);
-      })
-      .catch(() => {});
   }, []);
 
   const pillars = [
