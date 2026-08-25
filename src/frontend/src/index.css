@@ -183,22 +183,37 @@ body {
 }
 
 /*
- * Readability scrim. Heaviest across the left half, where the headline and
- * CTAs sit, and never falls to fully transparent on the right so centred
- * type stays crisp over a bright frame of the film.
+ * Readability scrim.
+ *
+ * From md up the copy sits in the left half, so the scrim is weighted there
+ * and thins across the right to leave the film's cup animation visible. On
+ * phones the copy is centred, so an even top-to-bottom wash covers the whole
+ * viewport instead.
  */
 .hero-scrim {
   position: absolute;
   inset: 0;
   z-index: 1;
   background: linear-gradient(
-    100deg,
-    oklch(18% 0.03 50 / 0.86) 0%,
-    oklch(18% 0.03 50 / 0.74) 22%,
-    oklch(18% 0.03 50 / 0.52) 46%,
-    oklch(18% 0.03 50 / 0.34) 70%,
-    oklch(18% 0.03 50 / 0.28) 100%
+    to bottom,
+    oklch(18% 0.03 50 / 0.72) 0%,
+    oklch(18% 0.03 50 / 0.6) 42%,
+    oklch(18% 0.03 50 / 0.54) 72%,
+    oklch(18% 0.03 50 / 0.46) 100%
   );
+}
+
+@media (min-width: 768px) {
+  .hero-scrim {
+    background: linear-gradient(
+      100deg,
+      oklch(18% 0.03 50 / 0.88) 0%,
+      oklch(18% 0.03 50 / 0.8) 26%,
+      oklch(18% 0.03 50 / 0.56) 48%,
+      oklch(18% 0.03 50 / 0.28) 72%,
+      oklch(18% 0.03 50 / 0.16) 100%
+    );
+  }
 }
 
 /*
