@@ -33,7 +33,7 @@ export default function Navigation() {
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
           ? "bg-cream-light/95 backdrop-blur-sm shadow-warm border-b border-[var(--accent-yellow-border)]"
-          : "bg-brown-dark/80 backdrop-blur-sm border-b border-[var(--accent-yellow-border)]/30"
+          : "nav-over-hero border-b border-transparent"
       }`}
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -56,7 +56,7 @@ export default function Navigation() {
               )}
             </div>
             <span
-              className={`font-display text-lg font-semibold transition-colors ${isScrolled ? "text-brown-dark" : "text-cream-light"}`}
+              className={`font-display text-lg font-semibold transition-colors ${isScrolled ? "text-brown-dark" : "text-cream-light drop-shadow-[0_1px_6px_rgba(0,0,0,0.55)]"}`}
             >
               Overflow of Jo
             </span>
@@ -72,7 +72,7 @@ export default function Navigation() {
                 className={`text-sm font-body transition-colors relative group bg-transparent border-0 p-0 cursor-pointer ${
                   isScrolled
                     ? "text-brown-mid hover:text-brown-dark"
-                    : "text-cream-light hover:text-[var(--accent-yellow)] font-medium"
+                    : "text-cream-light hover:text-[var(--accent-yellow)] font-medium drop-shadow-[0_1px_5px_rgba(0,0,0,0.5)]"
                 }`}
               >
                 {link.label}

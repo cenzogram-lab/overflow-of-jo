@@ -1,7 +1,11 @@
 export const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 export const ALLOWED_IMAGE_EXTENSIONS = [".jpg", ".jpeg", ".png", ".webp"];
-export const ALLOWED_VIDEO_TYPES = ["video/mp4", "video/quicktime"];
-export const ALLOWED_VIDEO_EXTENSIONS = [".mp4", ".mov"];
+export const ALLOWED_VIDEO_TYPES = [
+  "video/mp4",
+  "video/webm",
+  "video/quicktime",
+];
+export const ALLOWED_VIDEO_EXTENSIONS = [".mp4", ".webm", ".mov"];
 
 export interface ValidationResult {
   valid: boolean;
@@ -36,7 +40,7 @@ export function validateVideoFile(file: File): ValidationResult {
   if (!mimeOk && !extOk) {
     return {
       valid: false,
-      error: `Invalid file type. Please upload an MP4 or MOV video. Got: ${file.name}`,
+      error: `Invalid file type. Please upload an MP4, WEBM, or MOV video. Got: ${file.name}`,
     };
   }
 

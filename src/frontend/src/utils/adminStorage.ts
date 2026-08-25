@@ -42,9 +42,9 @@ export async function fileToDataURL(file: File): Promise<string> {
   });
 }
 
-// Upload a drink image to blob storage and return a direct URL.
-// This keeps the menu JSON small by storing URLs instead of base64 data.
-export async function uploadImageToBlobStorage(file: File): Promise<string> {
+// Upload a file to blob storage and return a direct URL. Used for drink
+// images and for hero video, which is far too large to inline as base64.
+export async function uploadFileToBlobStorage(file: File): Promise<string> {
   const config = await loadConfig();
   const agent = new HttpAgent({ host: config.backend_host });
   if (config.backend_host?.includes("localhost")) {

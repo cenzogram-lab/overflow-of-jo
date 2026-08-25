@@ -9,6 +9,7 @@ import {
   useState,
 } from "react";
 import { createActorWithConfig } from "../config";
+import { DEFAULT_HERO_POSTER, resolveHeroMedia } from "../utils/heroMedia";
 
 // ─── Timing ───────────────────────────────────────────────────────────────────
 
@@ -194,9 +195,12 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
     advance(76);
 
     // Warm the artwork that paints above the fold before lifting the veil.
+    // The hero slot may hold video, which streams rather than preloads — warm
+    // its poster instead of waiting on a decode that can never happen.
+    const heroMedia = resolveHeroMedia(resolvedHero);
     await Promise.all([
       preloadImage(
-        resolvedHero ?? "/assets/generated/hero-bg.dim_1440x900.png",
+        heroMedia.kind === "image" ? heroMedia.src : DEFAULT_HERO_POSTER,
       ),
       preloadImage(resolvedLogo),
       preloadImage(

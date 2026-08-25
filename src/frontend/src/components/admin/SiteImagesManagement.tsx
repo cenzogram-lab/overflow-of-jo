@@ -6,14 +6,25 @@ import {
   getSiteImageFromBackend,
   removeSiteImageFromBackend,
   setSiteImageOnBackend,
+  uploadFileToBlobStorage,
 } from "../../utils/adminStorage";
-import { validateImageFile } from "../../utils/fileValidation";
+import {
+  validateImageFile,
+  validateVideoFile,
+} from "../../utils/fileValidation";
+import {
+  DEFAULT_HERO_VIDEO,
+  isVideoSource,
+  markAsVideo,
+} from "../../utils/heroMedia";
 
 interface SiteImageItem {
   key: string;
   label: string;
   description: string;
   defaultSrc: string;
+  /** Hero also takes video; the other slots are stills only. */
+  allowsVideo?: boolean;
 }
 
 const SITE_IMAGES: SiteImageItem[] = [
@@ -21,8 +32,9 @@ const SITE_IMAGES: SiteImageItem[] = [
     key: STORAGE_KEYS.HERO_IMAGE,
     label: "Hero Background",
     description:
-      "The full-screen background image on the homepage hero section.",
-    defaultSrc: "/assets/generated/hero-bg.dim_1440x900.png",
+      "The full-screen background on the homepage hero. Upload an image or a video — reset to fall back to the looping brand film.",
+    defaultSrc: DEFAULT_HERO_VIDEO,
+    allowsVideo: true,
   },
   {
     key: STORAGE_KEYS.LOGO_IMAGE,
@@ -68,7 +80,18 @@ export default function SiteImagesManagement() {
   }, []);
 
   const handleUpload = async (item: SiteImageItem, file: File) => {
-    const validation = validateImageFile(file);
+    const isVideo = file.type.startsWith("video/") || isVideoSource(file.name);
+    if (isVideo && !item.allowsVideo) {
+      setErrors((e) => ({
+        ...e,
+        [item.key]: "This slot takes an image. Video is only for the hero.",
+      }));
+      return;
+    }
+
+    const validation = isVideo
+      ? validateVideoFile(file)
+      : validateImageFile(file);
     if (!validation.valid) {
       setErrors((e) => ({
         ...e,
@@ -79,9 +102,13 @@ export default function SiteImagesManagement() {
     setErrors((e) => ({ ...e, [item.key]: "" }));
     setUploading((u) => ({ ...u, [item.key]: true }));
     try {
-      const dataUrl = await fileToDataURL(file);
-      await setSiteImageOnBackend(item.key, dataUrl);
-      setImages((prev) => ({ ...prev, [item.key]: dataUrl }));
+      // Video goes to blob storage and is referenced by URL — inlining it as
+      // base64 would be far too large for the canister to hold.
+      const stored = isVideo
+        ? markAsVideo(await uploadFileToBlobStorage(file))
+        : await fileToDataURL(file);
+      await setSiteImageOnBackend(item.key, stored);
+      setImages((prev) => ({ ...prev, [item.key]: stored }));
       setSaved((s) => ({ ...s, [item.key]: true }));
       setTimeout(() => setSaved((s) => ({ ...s, [item.key]: false })), 2000);
     } catch (err: any) {
@@ -116,7 +143,8 @@ export default function SiteImagesManagement() {
       <div className="mb-6">
         <h2 className="text-xl font-bold text-admin-text">Site Images</h2>
         <p className="text-admin-muted text-sm mt-0.5">
-          Upload custom images for key sections of the public site.
+          Upload custom media for key sections of the public site. The hero also
+          accepts video.
         </p>
       </div>
 
@@ -155,22 +183,39 @@ export default function SiteImagesManagement() {
                     </div>
                   ) : (
                     <div className="w-40 h-24 rounded-lg border border-admin-border overflow-hidden bg-admin-input">
-                      {displaySrc ? (
+                      {!displaySrc ? (
+                        <div className="w-full h-full flex items-center justify-center text-admin-muted text-xs">
+                          No image
+                        </div>
+                      ) : isVideoSource(displaySrc) ? (
+                        <video
+                          key={displaySrc}
+                          src={displaySrc}
+                          autoPlay
+                          loop
+                          muted
+                          playsInline
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
                         <img
                           src={displaySrc}
                           alt={item.label}
                           className="w-full h-full object-cover"
                         />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-admin-muted text-xs">
-                          No image
-                        </div>
                       )}
                     </div>
                   )}
                   {isCustom && (
                     <span className="inline-block mt-1.5 text-xs text-admin-accent font-medium">
-                      Custom
+                      {isVideoSource(currentImage)
+                        ? "Custom video"
+                        : "Custom image"}
+                    </span>
+                  )}
+                  {!isCustom && item.allowsVideo && (
+                    <span className="inline-block mt-1.5 text-xs text-admin-muted">
+                      Default brand film
                     </span>
                   )}
                 </div>
@@ -198,7 +243,9 @@ export default function SiteImagesManagement() {
                       )}
                       {uploading[item.key]
                         ? "Uploading..."
-                        : "Upload New Image"}
+                        : item.allowsVideo
+                          ? "Upload Image or Video"
+                          : "Upload New Image"}
                     </button>
 
                     <button
@@ -230,7 +277,11 @@ export default function SiteImagesManagement() {
                       fileRefs.current[item.key] = el;
                     }}
                     type="file"
-                    accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                    accept={
+                      item.allowsVideo
+                        ? ".jpg,.jpeg,.png,.webp,.mp4,.webm,.mov,image/jpeg,image/png,image/webp,video/mp4,video/webm,video/quicktime"
+                        : ".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                    }
                     className="hidden"
                     onChange={(e) => {
                       const file = e.target.files?.[0];

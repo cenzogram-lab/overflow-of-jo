@@ -42,12 +42,14 @@ export default {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
-        // Brand palette
-        'cream-light': 'oklch(97% 0.012 75)',
-        'cream-dark': 'oklch(88% 0.025 75)',
-        'brown-light': 'oklch(62% 0.07 60)',
-        'brown-mid': 'oklch(48% 0.07 55)',
-        'brown-dark': 'oklch(28% 0.05 50)',
+        // Brand palette. The <alpha-value> placeholder is required for the
+        // opacity modifier (bg-cream-light/95) to resolve — without it Tailwind
+        // drops the utility entirely and the element renders unstyled.
+        'cream-light': 'oklch(97% 0.012 75 / <alpha-value>)',
+        'cream-dark': 'oklch(88% 0.025 75 / <alpha-value>)',
+        'brown-light': 'oklch(62% 0.07 60 / <alpha-value>)',
+        'brown-mid': 'oklch(48% 0.07 55 / <alpha-value>)',
+        'brown-dark': 'oklch(28% 0.05 50 / <alpha-value>)',
         'accent-yellow': 'var(--accent-yellow)',
         // Admin palette
         'admin-bg': 'var(--admin-bg)',

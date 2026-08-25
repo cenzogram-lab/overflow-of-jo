@@ -162,3 +162,88 @@ body {
   );
   opacity: 0.5;
 }
+
+/* ─── Hero background media ─── */
+
+/*
+ * The video (or a custom still) fills the hero and sits behind every overlay.
+ * `hero-background-video` is also applied to the <img> branch so both media
+ * types crop identically.
+ */
+.hero-background-video {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  pointer-events: none;
+  background-color: oklch(22% 0.04 55);
+}
+
+/*
+ * Readability scrim. Heaviest across the left half, where the headline and
+ * CTAs sit, and never falls to fully transparent on the right so centred
+ * type stays crisp over a bright frame of the film.
+ */
+.hero-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    100deg,
+    oklch(18% 0.03 50 / 0.86) 0%,
+    oklch(18% 0.03 50 / 0.74) 22%,
+    oklch(18% 0.03 50 / 0.52) 46%,
+    oklch(18% 0.03 50 / 0.34) 70%,
+    oklch(18% 0.03 50 / 0.28) 100%
+  );
+}
+
+/*
+ * Blend into the page body. The end stop must stay identical to `cream-light`
+ * in tailwind.config.js — the colour the Our Mission section paints — or a
+ * seam appears where the hero meets it.
+ */
+.hero-bottom-fade {
+  position: absolute;
+  left: 0;
+  right: 0;
+  /* Overhangs by a pixel so no hairline shows at fractional viewport heights. */
+  bottom: -1px;
+  height: 140px;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    oklch(97% 0.012 75 / 0) 0%,
+    oklch(97% 0.012 75 / 0.35) 40%,
+    oklch(97% 0.012 75 / 0.75) 68%,
+    oklch(97% 0.012 75 / 0.95) 87%,
+    oklch(97% 0.012 75 / 1) 100%
+  );
+}
+
+@media (max-width: 640px) {
+  .hero-bottom-fade {
+    height: 120px;
+  }
+}
+
+/* ─── Navigation over the hero ─── */
+
+/*
+ * Transparent apart from a soft vignette, so the film runs behind the bar
+ * while cream links and the gold button keep their contrast.
+ */
+.nav-over-hero {
+  background: linear-gradient(
+    to bottom,
+    oklch(18% 0.03 50 / 0.5) 0%,
+    oklch(18% 0.03 50 / 0.28) 60%,
+    oklch(18% 0.03 50 / 0.1) 100%
+  );
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
