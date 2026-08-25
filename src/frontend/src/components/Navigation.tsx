@@ -63,7 +63,7 @@ export default function Navigation() {
           </button>
 
           {/* Desktop Nav */}
-          <div className="hidden md:flex items-center gap-6">
+          <div className="hidden lg:flex items-center gap-6">
             {navLinks.map((link) => (
               <button
                 key={link.label}
@@ -91,7 +91,7 @@ export default function Navigation() {
           {/* Mobile Menu Button */}
           <button
             type="button"
-            className={`md:hidden p-2 rounded-md transition-colors ${isScrolled ? "text-brown-mid hover:text-brown-dark hover:bg-[var(--accent-yellow)]/30" : "text-cream-light hover:text-[var(--accent-yellow)] hover:bg-white/10"}`}
+            className={`lg:hidden p-2 rounded-md transition-colors ${isScrolled ? "text-brown-mid hover:text-brown-dark hover:bg-[var(--accent-yellow)]/30" : "text-cream-light hover:text-[var(--accent-yellow)] hover:bg-white/10"}`}
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-label="Toggle menu"
           >
@@ -101,9 +101,11 @@ export default function Navigation() {
           </button>
         </div>
 
-        {/* Mobile Menu */}
+        {/* Mobile Menu. The panel opacity is an arbitrary value because /98 is
+            outside Tailwind's scale — as a plain modifier the utility is never
+            generated and the panel renders transparent. */}
         {isMobileMenuOpen && (
-          <div className="md:hidden bg-cream-light/98 border-t border-[var(--accent-yellow-border)] py-4 px-2 shadow-warm">
+          <div className="lg:hidden bg-cream-light/[0.98] border-t border-[var(--accent-yellow-border)] py-4 px-2 shadow-warm">
             {navLinks.map((link) => (
               <button
                 key={link.label}
